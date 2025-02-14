@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Sockets;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityStandardAssets.Cameras;
 
 public class NetManager {
   private static readonly byte[] buffer = new byte[1024];

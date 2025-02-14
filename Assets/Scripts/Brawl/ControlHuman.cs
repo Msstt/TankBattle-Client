@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityStandardAssets.Cameras;
 
 public class ControlHuman : BaseHuman {
   new void Start() {
