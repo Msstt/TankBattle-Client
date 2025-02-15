@@ -22,8 +22,8 @@ public class ControlHuman : BaseHuman {
       if (Physics.Raycast(ray, out RaycastHit hitInfo)) {
         if (hitInfo.collider.CompareTag("Terrain")) {
           MoveTo(hitInfo.point);
-          NetManager.Send("Move", new string[] {
-            NetManager.GetDesc(),
+          BrawlNetManager.Send("Move", new string[] {
+            BrawlNetManager.GetDesc(),
             hitInfo.point.x.ToString(),
             hitInfo.point.y.ToString(),
             hitInfo.point.z.ToString()
@@ -44,8 +44,8 @@ public class ControlHuman : BaseHuman {
       }
       transform.LookAt(hitInfo.point);
       Attack();
-      NetManager.Send("Attack", new string[] {
-        NetManager.GetDesc(),
+      BrawlNetManager.Send("Attack", new string[] {
+        BrawlNetManager.GetDesc(),
         transform.eulerAngles.y.ToString()
       });
 
@@ -68,8 +68,8 @@ public class ControlHuman : BaseHuman {
     if (!hitInfo.collider.gameObject.TryGetComponent<SyncHuman>(out var syncHuman)) {
       yield break;
     }
-    NetManager.Send("Hit", new string[] {
-      NetManager.GetDesc(),
+    BrawlNetManager.Send("Hit", new string[] {
+      BrawlNetManager.GetDesc(),
       syncHuman.desc
     });
   }

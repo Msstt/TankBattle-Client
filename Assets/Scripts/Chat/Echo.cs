@@ -19,6 +19,7 @@ public class Echo : MonoBehaviour {
   private string textString = string.Empty;
 
   private Socket socket;
+  private bool isClose = false;
 
   private readonly ByteArray readBuffer = new();
   private readonly Queue<ByteArray> writeQueue = new();
@@ -42,7 +43,6 @@ public class Echo : MonoBehaviour {
       if (readBuffer.Remain < 8) {
         readBuffer.Resize(2 * readBuffer.Length);
       }
-      Thread.Sleep(5000);
       socket.BeginReceive(readBuffer.buffer, readBuffer.writeIndex, readBuffer.Remain, 0, OnReceive, null);
     } catch (SocketException ex) {
       Debug.Log("Socket receive failed: " + ex);
@@ -65,6 +65,9 @@ public class Echo : MonoBehaviour {
   }
 
   public void Send() {
+    if (isClose) {
+      return;
+    }
     byte[] bodyBytes = System.Text.Encoding.UTF8.GetBytes(inputField.text);
     Int16 length = (Int16)bodyBytes.Length;
     byte[] lengthBytes = BitConverter.GetBytes(length);
@@ -98,9 +101,18 @@ public class Echo : MonoBehaviour {
       }
       if (sendArray != null) {
         socket.BeginSend(sendArray.buffer, sendArray.readIndex, sendArray.Length, 0, OnSend, null);
+      } else if (isClose) {
+        socket.Close();
       }
     } catch (SocketException ex) {
       Debug.Log("Socket send failed: " + ex);
+    }
+  }
+
+  private void Close() {
+    isClose = true;
+    if (writeQueue.Count > 0) {
+      socket.Close();
     }
   }
 }

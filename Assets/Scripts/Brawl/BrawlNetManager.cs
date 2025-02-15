@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class NetManager {
+public class BrawlNetManager {
   private static readonly byte[] buffer = new byte[1024];
   private static Socket socket;
   public delegate void MsgHandler(string[] args);

@@ -7,26 +7,26 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Main : MonoBehaviour {
+public class BrawlMain : MonoBehaviour {
   private readonly Dictionary<string, BaseHuman> otherPlayers = new();
   public GameObject human;
 
   void Start() {
-    NetManager.AddHandler("Enter", OnEnter);
-    NetManager.AddHandler("List", OnList);
-    NetManager.AddHandler("Move", OnMove);
-    NetManager.AddHandler("Leave", OnLeave);
-    NetManager.AddHandler("Attack", OnAttack);
-    NetManager.AddHandler("Die", OnDie);
-    NetManager.Connect("127.0.0.1", 8888);
+    BrawlNetManager.AddHandler("Enter", OnEnter);
+    BrawlNetManager.AddHandler("List", OnList);
+    BrawlNetManager.AddHandler("Move", OnMove);
+    BrawlNetManager.AddHandler("Leave", OnLeave);
+    BrawlNetManager.AddHandler("Attack", OnAttack);
+    BrawlNetManager.AddHandler("Die", OnDie);
+    BrawlNetManager.Connect("127.0.0.1", 8888);
 
     float x = 500 + Random.Range(-10, 10);
     float y = 0;
     float z = 500 + Random.Range(0, 10);
     float v = Random.Range(0, 360);
-    CreateHuman(NetManager.GetDesc(), x, y, z, v, true);
-    NetManager.Send("Enter", new string[] {
-      NetManager.GetDesc(),
+    CreateHuman(BrawlNetManager.GetDesc(), x, y, z, v, true);
+    BrawlNetManager.Send("Enter", new string[] {
+      BrawlNetManager.GetDesc(),
       x.ToString(),
       y.ToString(),
       z.ToString(),
@@ -38,11 +38,11 @@ public class Main : MonoBehaviour {
 
   private IEnumerator GetList() {
     yield return new WaitForSeconds(0.1f);
-    NetManager.Send("List", new string[0]);
+    BrawlNetManager.Send("List", new string[0]);
   }
 
   void Update() {
-    NetManager.Update();
+    BrawlNetManager.Update();
   }
 
   private void CreateHuman(string desc, float x, float y, float z, float v, bool isCtrl) {
@@ -65,7 +65,7 @@ public class Main : MonoBehaviour {
 
   private void OnList(string[] args) {
     for (int i = 0; i + 5 < args.Length; i += 6) {
-      if (args[i] == NetManager.GetDesc()) {
+      if (args[i] == BrawlNetManager.GetDesc()) {
         continue;
       }
       CreateHuman(args[i], float.Parse(args[i + 1]), float.Parse(args[i + 2]), float.Parse(args[i + 3]), float.Parse(args[i + 4]), false);
@@ -98,7 +98,7 @@ public class Main : MonoBehaviour {
   }
 
   private void OnDie(string[] args) {
-    if (args[0] == NetManager.GetDesc()) {
+    if (args[0] == BrawlNetManager.GetDesc()) {
       Debug.Log("Game Over!");
       return;
     }
