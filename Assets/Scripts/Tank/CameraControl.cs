@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Codice.Client.BaseCommands.CheckIn.Progress;
-using UnityEditor.Graphs;
 using UnityEngine;
 
 public class CameraControl : MonoBehaviour {

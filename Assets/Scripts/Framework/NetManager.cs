@@ -13,6 +13,7 @@ public enum NetEvent {
 
 public class NetManager {
   private const int MAX_MESSAGE_FIRE = 10;
+  private const int MAX_EVENT_FIRE = 10;
   private static readonly List<string> systemMsg = new() { "MsgPong" };
 
   private static Socket socket;
@@ -28,9 +29,11 @@ public class NetManager {
   private static readonly Dictionary<string, MsgListener> msgListeners = new();
   private static readonly List<MsgBase> msgList = new();
   private static int msgCount = 0;
+  private static readonly List<(NetEvent, string)> eventList = new();
+  private static int eventCount = 0;
 
   public static bool isUsePing = true;
-  public static int pingInterval = 2;
+  public static int pingInterval = 30;
   private static float lastPingTime;
   private static float lastPongTime;
 
@@ -50,6 +53,7 @@ public class NetManager {
 
   public static void Update() {
     MsgUpdate();
+    EventUpdate();
     PingUpdate();
   }
 
@@ -73,11 +77,11 @@ public class NetManager {
     try {
       socket.EndConnect(ar);
       Debug.Log("NetManager connect success.");
-      FireEvent(NetEvent.ConnectSuccess, "");
+      AddEvent(NetEvent.ConnectSuccess, "");
       socket.BeginReceive(readBuffer.buffer, readBuffer.writeIndex, readBuffer.Remain, 0, OnReceive, null);
     } catch (SocketException ex) {
       Debug.Log("NetManager connect fail: " + ex);
-      FireEvent(NetEvent.ConnectFail, ex.ToString());
+      AddEvent(NetEvent.ConnectFail, ex.ToString());
     } finally {
       isConnecting = false;
     }
@@ -96,7 +100,7 @@ public class NetManager {
       isClosing = true;
     } else {
       socket.Close();
-      FireEvent(NetEvent.Close, "");
+      AddEvent(NetEvent.Close, "");
     }
   }
   #endregion
@@ -204,27 +208,6 @@ public class NetManager {
     msgCount++;
     OnReceiveData();
   }
-
-  private static void MsgUpdate() {
-    if (msgCount == 0) {
-      return;
-    }
-    for (int i = 0; i < MAX_MESSAGE_FIRE; i++) {
-      MsgBase msg = null;
-      lock (writeQueue) {
-        if (msgList.Count > 0) {
-          msg = msgList[0];
-          msgList.RemoveAt(0);
-          msgCount--;
-        }
-      }
-      if (msg == null) {
-        break;
-      }
-      FireMsg(msg);
-    }
-  }
-
   #endregion
 
   #region 事件分发
@@ -252,6 +235,32 @@ public class NetManager {
     }
     eventListeners[netEvent](error);
   }
+
+  private static void AddEvent(NetEvent netEvent, string error) {
+    eventList.Add((netEvent, error));
+    eventCount++;
+  }
+
+  private static void EventUpdate() {
+    if (eventCount == 0) {
+      return;
+    }
+    for (int i = 0; i < MAX_EVENT_FIRE; i++) {
+      NetEvent? netEvent = null;
+      string error = "";
+      lock (eventList) {
+        if (eventList.Count > 0) {
+          (netEvent, error) = eventList[0];
+          eventList.RemoveAt(0);
+          eventCount--;
+        }
+      }
+      if (netEvent == null) {
+        break;
+      }
+      FireEvent(netEvent.Value, error);
+    }
+  }
   #endregion
 
   #region 消息分发
@@ -263,7 +272,7 @@ public class NetManager {
     }
   }
 
-  public static void RemoveEventListener(string msgName, MsgListener msgListener) {
+  public static void RemoveMsgListener(string msgName, MsgListener msgListener) {
     if (!msgListeners.ContainsKey(msgName)) {
       return;
     }
@@ -278,6 +287,26 @@ public class NetManager {
       return;
     }
     msgListeners[msg.ProtoName](msg);
+  }
+
+  private static void MsgUpdate() {
+    if (msgCount == 0) {
+      return;
+    }
+    for (int i = 0; i < MAX_MESSAGE_FIRE; i++) {
+      MsgBase msg = null;
+      lock (msgList) {
+        if (msgList.Count > 0) {
+          msg = msgList[0];
+          msgList.RemoveAt(0);
+          msgCount--;
+        }
+      }
+      if (msg == null) {
+        break;
+      }
+      FireMsg(msg);
+    }
   }
   #endregion
 
