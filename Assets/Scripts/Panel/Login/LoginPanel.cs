@@ -62,10 +62,7 @@ public class LoginPanel : BasePanel {
       return;
     }
     if (msg.Result == 0) {
-      GameObject tank = new("tank");
-      tank.AddComponent<ControlTank>().init("Tank");
-      tank.AddComponent<CameraControl>();
-
+      PanelManager.Open<RoomListPanel>();
       GameMain.ID = ID.text;
       Close();
     } else {
