@@ -14,7 +14,7 @@ public enum NetEvent {
 public class NetManager {
   private const int MAX_MESSAGE_FIRE = 10;
   private const int MAX_EVENT_FIRE = 10;
-  private static readonly List<string> systemMsg = new() { "MsgPong" };
+  private static readonly List<string> systemMsg = new() { "MsgPong", "MsgSyncTank" };
 
   private static Socket socket;
   private static bool isConnecting;

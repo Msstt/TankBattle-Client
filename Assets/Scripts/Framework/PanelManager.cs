@@ -21,10 +21,10 @@ public class PanelManager : MonoBehaviour {
     layers.Add(Layer.Tip, canvas.Find("Tip"));
   }
 
-  public static void Open<T>(params object[] param) where T : BasePanel {
+  public static BasePanel Open<T>(params object[] param) where T : BasePanel {
     string name = typeof(T).ToString();
     if (panels.ContainsKey(name)) {
-      return;
+      return null;
     }
     T panel = root.AddComponent<T>();
     panel.OnInit();
@@ -36,6 +36,7 @@ public class PanelManager : MonoBehaviour {
       tips.Add(panel);
     }
     panel.OnShow(param);
+    return panel;
   }
 
   public static void Close(string name) {

@@ -8,7 +8,7 @@ public class FrameworkTest : MonoBehaviour {
     NetManager.AddEventListener(NetEvent.ConnectSuccess, OnConnectSuccess);
     NetManager.AddEventListener(NetEvent.ConnectFail, OnConnectFail);
     NetManager.AddEventListener(NetEvent.Close, OnClose);
-    NetManager.AddMsgListener("MsgMove", OnMsgMove);
+    NetManager.AddMsgListener("MsgTest", OnMsgTest);
   }
 
   void Update() {
@@ -24,7 +24,7 @@ public class FrameworkTest : MonoBehaviour {
   }
 
   public void Move() {
-    MsgMove msg = new() {
+    MsgTest msg = new() {
       X = 20,
       Y = -80,
       Z = 0
@@ -32,9 +32,9 @@ public class FrameworkTest : MonoBehaviour {
     NetManager.Send(msg);
   }
 
-  private void OnMsgMove(MsgBase msg) {
-    MsgMove msgMove = (MsgMove)msg;
-    Debug.Log("Call OnMsgMove " + msgMove.X + "," + msgMove.Y + "," + msgMove.Z);
+  private void OnMsgTest(MsgBase msg) {
+    MsgTest MsgTest = (MsgTest)msg;
+    Debug.Log("Call OnMsgTest " + MsgTest.X + "," + MsgTest.Y + "," + MsgTest.Z);
   }
 
   private void OnClose(string error) {

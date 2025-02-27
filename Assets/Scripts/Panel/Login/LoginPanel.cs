@@ -62,8 +62,8 @@ public class LoginPanel : BasePanel {
       return;
     }
     if (msg.Result == 0) {
-      PanelManager.Open<RoomListPanel>();
       GameMain.ID = ID.text;
+      PanelManager.Open<RoomListPanel>();
       Close();
     } else {
       PanelManager.Tip("登录失败!");

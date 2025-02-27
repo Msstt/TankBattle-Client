@@ -9,3 +9,11 @@ public class MsgPing : MsgBase {
 public class MsgPong : MsgBase {
   public MsgPong() { ProtoName = "MsgPong"; }
 }
+
+public class MsgTest : MsgBase {
+  public MsgTest() { ProtoName = "MsgTest"; }
+
+  public float X = 0;
+  public float Y = 0;
+  public float Z = 0;
+}

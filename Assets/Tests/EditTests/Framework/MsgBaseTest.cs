@@ -9,14 +9,14 @@ public class MsgBaseTest {
 
   [Test]
   public void MsgBaseTestMsg() {
-    MsgMove msg = new() {
+    MsgTest msg = new() {
       X = 20,
       Y = -80
     };
     byte[] bytes = MsgBase.Encode(msg);
-    msg = MsgBase.Decode("MsgMove", bytes, 0, bytes.Length) as MsgMove;
+    msg = MsgBase.Decode("MsgTest", bytes, 0, bytes.Length) as MsgTest;
     Assert.NotNull(msg);
-    Assert.AreEqual("MsgMove", msg.ProtoName);
+    Assert.AreEqual("MsgTest", msg.ProtoName);
     Assert.AreEqual(20, msg.X);
     Assert.AreEqual(-80, msg.Y);
     Assert.AreEqual(0, msg.Z);
@@ -24,10 +24,10 @@ public class MsgBaseTest {
 
   [Test]
   public void MsgBaseTestMsgName() {
-    MsgMove msgMove = new();
-    byte[] bs = MsgBase.EncodeName(msgMove);
+    MsgTest MsgTest = new();
+    byte[] bs = MsgBase.EncodeName(MsgTest);
     string name = MsgBase.DecodeName(bs, 0, out int count);
-    Assert.AreEqual("MsgMove", name);
+    Assert.AreEqual("MsgTest", name);
     Assert.AreEqual(9, count);
   }
 }

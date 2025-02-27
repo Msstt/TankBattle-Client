@@ -73,7 +73,6 @@ public class RoomPanel : BasePanel {
       return;
     }
     if (msg.Result == 0) {
-      Close();
       PanelManager.Tip("开始战斗!");
     } else {
       PanelManager.Tip("开始战斗失败!");
@@ -86,7 +85,7 @@ public class RoomPanel : BasePanel {
     }
     GameObject room = Instantiate(playerPrefabs, list.transform);
     room.transform.Find("ID").GetComponent<TMP_Text>().text = "账号：" + info.ID;
-    room.transform.Find("Camp").GetComponent<TMP_Text>().text = "阵营：" + info.Camp;
+    room.transform.Find("Camp").GetComponent<TMP_Text>().text = "阵营：" + (info.Camp == 0 ? "蓝" : "绿");
     room.transform.Find("Score").GetComponent<TMP_Text>().text = "战绩：" + info.Win + " - " + info.Lose;
   }
 
